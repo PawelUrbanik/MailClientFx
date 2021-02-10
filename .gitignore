@@ -29,4 +29,5 @@ build/
 
 ### VS Code ###
 .vscode/
+src/utils/UsernameAndPasswd.java
 /src/main/resources/application.properties
