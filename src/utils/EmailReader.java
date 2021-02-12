@@ -6,8 +6,8 @@ import java.util.Properties;
 
 public class EmailReader {
 
-    private String username = "testerterster535@gmail.com";
-    private String password = "Tester123";
+    private String username = "";
+    private String password = "";
 
     private Session session;
     private Store store;
@@ -23,6 +23,15 @@ public class EmailReader {
     public void readEmails() {
         try {
             Folder folder = store.getFolder("INBOX");
+            Folder rf = store.getFolder("[Gmail]");
+            if ((rf.getType() & Folder.HOLDS_FOLDERS) != 0)
+            {
+                Folder[] f = rf.list();
+                for (int i = 0; i < f.length; i++)
+                {
+                    System.out.println(f[i].getFullName());
+                }
+            }
             folder.open(Folder.READ_ONLY);
             for (int i = folder.getMessageCount(); i >0 ; i--) {
                 Message message = folder.getMessage(i);
@@ -33,6 +42,16 @@ public class EmailReader {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    public Folder getFolder(String folderName){
+        try {
+            return store.getFolder(folderName);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private static Properties getGmailProperties() {
