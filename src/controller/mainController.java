@@ -5,13 +5,14 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebView;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -29,7 +30,7 @@ public class mainController implements Initializable {
 
 
     @FXML
-    private TreeView<String> treeView;
+    private TreeView<Folder> treeView;
     @FXML
     private TableView<Message> tableView;
     @FXML
@@ -41,10 +42,15 @@ public class mainController implements Initializable {
     @FXML
     private WebView messageWebView;
 
+    @FXML
+    private Button sendTextEmailButton;
+
+
     private Document messageLayout;
 
     private String username = "";
     private String passwd = "";
+    EmailReader emailReader;
 
     private ObservableList<Message> messagesList = FXCollections.observableList(new ArrayList<>());
 
@@ -52,55 +58,42 @@ public class mainController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         username= UsernameAndPasswd.getUsername();
         passwd= UsernameAndPasswd.getPassword();
+        emailReader = new EmailReader(username, passwd);
 
+        TreeItem<Folder> root = new TreeItem(username);
+        List<TreeItem<Folder>> folders =emailReader.getTreeItems();
+//        emailReader.readEmails();
+        for (TreeItem<Folder> folder : folders) {
+            root.getChildren().add(folder);
+        }
 
-        TreeItem<String> root = new TreeItem<>(username);
-        TreeItem<String> nodeA = new TreeItem<>("Inbox");
-        TreeItem<String> nodeB = new TreeItem<>("[Gmail]/Kosz");
-        TreeItem<String> nodeC = new TreeItem<>("[Gmail]/Oznaczone gwiazdką");
-        TreeItem<String> nodeD = new TreeItem<>("[Gmail]/Spam");
-        TreeItem<String> nodeE = new TreeItem<>("[Gmail]/Ważne");
-        TreeItem<String> nodeF = new TreeItem<>("[Gmail]/Wersje robocze");
-        TreeItem<String> nodeG = new TreeItem<>("[Gmail]/Wszystkie");
-        TreeItem<String> nodeH = new TreeItem<>("[Gmail]/Wysłane");
-        root.getChildren().addAll(nodeA, nodeB, nodeC, nodeD, nodeE, nodeF,nodeG,nodeH);
         treeView.setRoot(root);
 
         subjectColumn.setCellValueFactory(new PropertyValueFactory<Message, String>("subject"));
         senderColumn.setCellValueFactory(new PropertyValueFactory<Message, String>("sender"));
         sizeColumn.setCellValueFactory(new PropertyValueFactory<Message, Integer>("size"));
 
-
-        messageLayout = Jsoup.parse(
-                "<html><head><meta charset='UTF-8'>" +
-                        "</head><body></body></html>",
-                "UTF-16",
-                Parser.xmlParser()
-        );
-        messageWebView.getEngine().loadContent(messageLayout.html());
         tableView.setItems(messagesList);
     }
 
     @FXML
     void treeViewMouseClicked() {
-        if (treeView.getSelectionModel().getSelectedItem()== null) return;
-        String folderName =  treeView.getSelectionModel().getSelectedItem().getValue();
-        System.out.println(folderName);
-        EmailReader emailReader = new EmailReader(username, passwd);
-
-        if (!folderName.equals(username))
+        if (treeView.getSelectionModel().getSelectedItem()== null || treeView.getSelectionModel().getSelectedItem().getParent()==null) return;
+        String folderName =  treeView.getSelectionModel().getSelectedItem().getValue().getFullName();
+        System.out.println("FN: "+folderName);
+        messagesList.clear();
+        if (!folderName.equals(username) && !folderName.equals("[Gmail]"))
         try {
-            messagesList.clear();
-            Folder folder =emailReader.getFolder(folderName);
-            folder.open(Folder.READ_ONLY);
-            for (int i = folder.getMessageCount(); i >0 ; i--) {
-                Message message = folder.getMessage(i);
-                messagesList.add(message);
+                Folder folder =emailReader.getFolder(folderName);
+                if (folder.getMessageCount()==0)return;
+                System.out.println("Full Name:  -> " +folder.getFullName());
+                folder.open(Folder.READ_ONLY);
+                for (int i = folder.getMessageCount(); i >0 ; i--) {
+                    Message message = folder.getMessage(i);
+                    messagesList.add(message);
+
             }
 
-            for (Message message : messagesList) {
-                System.out.println(message.getSubject());
-            }
 
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -180,6 +173,21 @@ public class mainController implements Initializable {
                 messageWebView.getEngine().loadContent(message.html());
             }
         });
+    }
+
+    @FXML
+    void sendTextEmailAction() {
+        Scene scene=null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/sendTextEmailView.fxml"));
+            scene = new Scene(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.show();
     }
 
 }

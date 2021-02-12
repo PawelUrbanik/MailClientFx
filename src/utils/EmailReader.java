@@ -2,6 +2,10 @@ package utils;
 
 
 import jakarta.mail.*;
+import javafx.scene.control.TreeItem;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class EmailReader {
@@ -29,7 +33,7 @@ public class EmailReader {
                 Folder[] f = rf.list();
                 for (int i = 0; i < f.length; i++)
                 {
-                    System.out.println(f[i].getFullName());
+                    System.out.println(f[i].getName());
                 }
             }
             folder.open(Folder.READ_ONLY);
@@ -45,7 +49,9 @@ public class EmailReader {
     }
 
     public Folder getFolder(String folderName){
+
         try {
+            System.out.println(store.getDefaultFolder().getFullName());
             return store.getFolder(folderName);
         } catch (MessagingException e) {
             e.printStackTrace();
@@ -75,6 +81,28 @@ public class EmailReader {
         }
     }
 
+    public List<TreeItem<Folder>> getTreeItems() {
+        List<TreeItem<Folder>> folders= new ArrayList<>();
+        try {
+            Folder mainFolder = store.getDefaultFolder();
+            if ((mainFolder.getType() & Folder.HOLDS_FOLDERS) != 0) {
+                Folder[] mainFolderLiist = mainFolder.list();
+                for (int i = 0; i < mainFolderLiist.length; i++) {
+                    TreeItem<Folder> folderTreeItem = new TreeItem<>(mainFolderLiist[i]);
+                    if ((mainFolderLiist[i].getType() & Folder.HOLDS_FOLDERS) != 0) {
+                        Folder[] inFolder = mainFolderLiist[i].list();
+                        for (int j = 0; j < inFolder.length; j++) {
+                            folderTreeItem.getChildren().add(new TreeItem<>(inFolder[j]));
+                        }
+                    }
+                    folders.add(folderTreeItem);
+                }
+            }
+        } catch (MessagingException messagingException) {
+            messagingException.printStackTrace();
+        }
+        return folders;
+    }
 
 
     private static class GmailAuthenticator extends Authenticator {
