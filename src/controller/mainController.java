@@ -1,8 +1,7 @@
 package controller;
 
-import jakarta.mail.Folder;
-import jakarta.mail.Message;
-import jakarta.mail.MessagingException;
+import jakarta.mail.*;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,15 +12,18 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebView;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import utils.EmailReader;
 import utils.UsernameAndPasswd;
 
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class mainController implements Initializable {
 
@@ -39,6 +41,7 @@ public class mainController implements Initializable {
     @FXML
     private WebView messageWebView;
 
+    private Document messageLayout;
 
     private String username = "";
     private String passwd = "";
@@ -67,6 +70,14 @@ public class mainController implements Initializable {
         senderColumn.setCellValueFactory(new PropertyValueFactory<Message, String>("sender"));
         sizeColumn.setCellValueFactory(new PropertyValueFactory<Message, Integer>("size"));
 
+
+        messageLayout = Jsoup.parse(
+                "<html><head><meta charset='UTF-8'>" +
+                        "</head><body></body></html>",
+                "UTF-16",
+                Parser.xmlParser()
+        );
+        messageWebView.getEngine().loadContent(messageLayout.html());
         tableView.setItems(messagesList);
     }
 
@@ -94,6 +105,81 @@ public class mainController implements Initializable {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void tableViewMouseClicked() {
+        if (tableView.getSelectionModel().getSelectedItem()==null)return;
+        Message message = tableView.getSelectionModel().getSelectedItem();
+
+        showMessage(toHtml(message));
+
+
+    }
+
+    /**
+     * Konwertowanie wiadomości do HTML
+     * @param message
+     * @return
+     */
+    private Element toHtml(Message message) {
+        String messageSubject="";
+        Address[] messageFrom = new Address[1];
+        Address[] messageTo = new Address[100];
+        Date dateTime = null;
+        String messageContent="";
+
+        try {
+            messageSubject = message.getSubject();
+            messageFrom = message.getFrom().clone();
+            messageTo = message.getAllRecipients();
+            dateTime= message.getReceivedDate();
+            Object o = message.getContent();
+
+            /*Jeśli cotent jest stringiem*/
+            if (o instanceof String) messageContent = (String) o;
+            /*Jeśli content jest podzielony na części*/
+            if (o instanceof Multipart) {
+                Multipart mp = (Multipart)o;
+                int count = mp.getCount();
+                for (int i = 0; i < count; i++) {
+                    if(mp.getBodyPart(i).getContent().getClass().equals(String.class)) {
+                        messageContent = (String) mp.getBodyPart(i).getContent();
+                    }
+                }
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Element wrapper = new Element("li");
+        Element messageDetails = new Element("div").appendTo(wrapper);
+        Element message_div = new Element("div").appendTo(wrapper);
+        String messageDetailsHTML = "<div><b>Subject: </b>"+messageSubject+"<br> " +
+                "<b>From: </b>" + Arrays.stream(messageFrom).findFirst().get() + "<br>" +
+                "<b>To: </b>" + Arrays.stream(messageTo).findAny().get() + "<br>"+
+                "<b>Date: </b>" + dateTime + "<br>"+
+                "</div> <br><br>";
+        new Element("div").append(messageDetailsHTML).appendTo(messageDetails);
+//        new Element("b").append("")
+        new Element("div").append(messageContent).appendTo(message_div);
+
+        return wrapper;
+    }
+
+    private void showMessage(Element message) {
+
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                messageWebView.getEngine().loadContent("<html><head><meta charset='UTF-8'>\" +\n" +
+                        "                        \"</head><body></body></html>\",\n" +
+                        "                \"UTF-16\"");
+                messageWebView.getEngine().loadContent(message.html());
+            }
+        });
     }
 
 }
