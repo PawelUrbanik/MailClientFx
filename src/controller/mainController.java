@@ -190,4 +190,19 @@ public class mainController implements Initializable {
         stage.show();
     }
 
+    @FXML
+    void sendHTMLAction() {
+        Scene scene=null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/sendHTMLEmailView.fxml"));
+            scene = new Scene(loader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
+
 }
