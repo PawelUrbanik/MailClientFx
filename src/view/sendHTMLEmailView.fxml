@@ -57,6 +57,6 @@
          </font>
       </Label>
       <Button layoutX="481.0" layoutY="414.0" mnemonicParsing="false" onAction="#sendAction" prefHeight="26.0" prefWidth="102.0" text="Send" />
-      <HTMLEditor fx:id="htmlField" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" layoutX="20.0" layoutY="134.0" prefHeight="262.0" prefWidth="559.0" />
+      <HTMLEditor fx:id="htmlField" htmlText="&lt;html&gt;&lt;head&gt;&lt;meta charset=&quot;UTF-8&quot;&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" layoutX="20.0" layoutY="134.0" prefHeight="262.0" prefWidth="559.0" />
    </children>
 </AnchorPane>

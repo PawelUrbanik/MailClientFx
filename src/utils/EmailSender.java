@@ -32,15 +32,11 @@ public class EmailSender {
         }
     }
 
-    public void sendTextMessage(String toAddress, String subject, String body) {
+    public void sendTextMessage(String toAddress, String subject, String body) throws MessagingException {
         Session session = Session.getInstance(prop, new GmailAuthenticator(username, password));
-        try {
             Message message = getMessage(session, username, toAddress, subject);
             message.setText(body);
             Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
     }
 
     public void sendAttachmentMessage(String toAddress, String subject, String body, String fileName) {

@@ -2,6 +2,7 @@ package controller;
 
 import jakarta.mail.*;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -91,10 +93,8 @@ public class mainController implements Initializable {
                 for (int i = folder.getMessageCount(); i >0 ; i--) {
                     Message message = folder.getMessage(i);
                     messagesList.add(message);
-
+                    System.out.println("is expunged"+ message.getFlags().toString());
             }
-
-
         } catch (MessagingException e) {
             e.printStackTrace();
         }
@@ -106,8 +106,6 @@ public class mainController implements Initializable {
         Message message = tableView.getSelectionModel().getSelectedItem();
 
         showMessage(toHtml(message));
-
-
     }
 
     /**
@@ -156,21 +154,19 @@ public class mainController implements Initializable {
                 "<b>Date: </b>" + dateTime + "<br>"+
                 "</div> <br><br>";
         new Element("div").append(messageDetailsHTML).appendTo(messageDetails);
-//        new Element("b").append("")
         new Element("div").append(messageContent).appendTo(message_div);
 
         return wrapper;
     }
 
     private void showMessage(Element message) {
+        String layout ="<html><head><meta charset='UTF-8'></head><body>" + message.html() + "</body></html>";
 
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                messageWebView.getEngine().loadContent("<html><head><meta charset='UTF-8'>\" +\n" +
-                        "                        \"</head><body></body></html>\",\n" +
-                        "                \"UTF-16\"");
-                messageWebView.getEngine().loadContent(message.html());
+//                System.out.println(layout);
+                messageWebView.getEngine().loadContent(layout);
             }
         });
     }
