@@ -82,18 +82,18 @@ public class mainController implements Initializable {
     void treeViewMouseClicked() {
         if (treeView.getSelectionModel().getSelectedItem()== null || treeView.getSelectionModel().getSelectedItem().getParent()==null) return;
         String folderName =  treeView.getSelectionModel().getSelectedItem().getValue().getFullName();
-        System.out.println("FN: "+folderName);
+//        System.out.println("FN: "+folderName);
         messagesList.clear();
         if (!folderName.equals(username) && !folderName.equals("[Gmail]"))
         try {
                 Folder folder =emailReader.getFolder(folderName);
                 if (folder.getMessageCount()==0)return;
-                System.out.println("Full Name:  -> " +folder.getFullName());
+//                System.out.println("Full Name:  -> " +folder.getFullName());
                 folder.open(Folder.READ_ONLY);
                 for (int i = folder.getMessageCount(); i >0 ; i--) {
                     Message message = folder.getMessage(i);
                     messagesList.add(message);
-                    System.out.println("is expunged"+ message.getFlags().toString());
+//                    System.out.println("is expunged"+ message.getFlags().toString());
             }
         } catch (MessagingException e) {
             e.printStackTrace();

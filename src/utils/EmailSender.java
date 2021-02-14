@@ -21,15 +21,11 @@ public class EmailSender {
         prop = getGmailProperties();
     }
 
-    public void sendHTMLMessage(String toAddress, String subject, String body) {
+    public void sendHTMLMessage(String toAddress, String subject, String body) throws MessagingException {
         Session session = Session.getInstance(prop, new GmailAuthenticator(username, password));
-        try {
             Message message = getMessage(session, username, toAddress, subject);
             message.setContent(body, "text/html");
             Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
     }
 
     public void sendTextMessage(String toAddress, String subject, String body) throws MessagingException {

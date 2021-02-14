@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="512.0" prefWidth="862.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.mainController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.mainController">
    <top>
       <HBox prefHeight="35.0" prefWidth="862.0" BorderPane.alignment="CENTER">
          <children>
@@ -29,7 +29,13 @@
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                </padding></Button>
-            <Button mnemonicParsing="false" text="Button" />
+            <Button mnemonicParsing="false" text="Send e-mail with attachment">
+               <HBox.margin>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </padding></Button>
          </children>
       </HBox>
    </top>
@@ -38,27 +44,27 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <TreeView fx:id="treeView" onMouseClicked="#treeViewMouseClicked" prefHeight="475.0" prefWidth="249.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" />
+                  <TreeView fx:id="treeView" onMouseClicked="#treeViewMouseClicked" prefHeight="642.0" prefWidth="321.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
-                  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="475.0" prefWidth="602.0">
+                  <SplitPane dividerPositions="0.5" layoutY="-1.0" orientation="VERTICAL" prefHeight="645.0" prefWidth="766.0">
                     <items>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="234.0" prefWidth="663.0">
                            <children>
-                              <TableView fx:id="tableView" onMouseClicked="#tableViewMouseClicked" prefHeight="234.4" prefWidth="600.8" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                              <TableView fx:id="tableView" onMouseClicked="#tableViewMouseClicked" prefHeight="234.0" prefWidth="755.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <columns>
-                                  <TableColumn fx:id="subjectColumn" prefWidth="275.1999633908272" text="Subject" />
-                                  <TableColumn fx:id="senderColumn" prefWidth="208.0" text="Sender" />
-                                    <TableColumn fx:id="sizeColumn" prefWidth="116.00006103515625" text="Size" />
+                                  <TableColumn fx:id="subjectColumn" prefWidth="354.40002447366714" text="Subject" />
+                                  <TableColumn fx:id="senderColumn" prefWidth="307.20001220703125" text="Sender" />
+                                    <TableColumn fx:id="sizeColumn" prefWidth="88.00006103515625" text="Size" />
                                 </columns>
                               </TableView>
                            </children>
                         </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                            <children>
-                              <WebView fx:id="messageWebView" prefHeight="233.0" prefWidth="598.0" />
+                              <WebView fx:id="messageWebView" prefHeight="402.0" prefWidth="756.0" />
                            </children>
                         </AnchorPane>
                     </items>

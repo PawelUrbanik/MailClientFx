@@ -33,7 +33,7 @@ public class EmailReader {
                 Folder[] f = rf.list();
                 for (int i = 0; i < f.length; i++)
                 {
-                    System.out.println(f[i].getName());
+//                    System.out.println(f[i].getName());
                 }
             }
             folder.open(Folder.READ_ONLY);
@@ -51,7 +51,7 @@ public class EmailReader {
     public Folder getFolder(String folderName){
 
         try {
-            System.out.println(store.getDefaultFolder().getFullName());
+//            System.out.println(store.getDefaultFolder().getFullName());
             return store.getFolder(folderName);
         } catch (MessagingException e) {
             e.printStackTrace();

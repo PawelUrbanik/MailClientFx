@@ -14,7 +14,8 @@ public class Main extends Application {
 
         Parent root = FXMLLoader.load(getClass().getResource("/view/main.fxml"));
         primaryStage.setTitle("E-mail Client");
-        primaryStage.setScene(new Scene(root, 900, 600));
+        primaryStage.setScene(new Scene(root, 1100, 700));
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
