@@ -6,7 +6,9 @@ import jakarta.activation.FileDataSource;
 import jakarta.mail.*;
 import jakarta.mail.internet.*;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 public class EmailSender {
@@ -35,23 +37,24 @@ public class EmailSender {
             Transport.send(message);
     }
 
-    public void sendAttachmentMessage(String toAddress, String subject, String body, String fileName) {
+    public void sendAttachmentMessage(String toAddress, String subject, String body, List<File> files) throws MessagingException {
         Session session = Session.getInstance(prop, new GmailAuthenticator(username, password));
-        try {
+
             Message message = getMessage(session, username, toAddress, subject);
 
             BodyPart messageBodyPart = new MimeBodyPart();
             messageBodyPart.setText(body);
 
             Multipart multipart = new MimeMultipart();
-            messageBodyPart = getBodyPart(fileName);
             multipart.addBodyPart(messageBodyPart);
+            for (File file : files) {
+
+                messageBodyPart = getBodyPart(file.getAbsolutePath());
+                multipart.addBodyPart(messageBodyPart);
+            }
             message.setContent(multipart);
 
             Transport.send(message);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
     }
 
     private BodyPart getBodyPart(String fileName) throws MessagingException {
